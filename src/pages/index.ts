@@ -1,0 +1,13 @@
+export { default as Dashboard } from './Dashboard';
+export { default as StudentRequestHistoryPage } from './StudentRequestHistoryPage';
+export { default as StudentNoticeBoardPage } from './StudentNoticeBoardPage';
+export { default as WardenDashboard } from './WardenDashboard';
+export { default as NoticeBoardPage } from './NoticeBoardPage';
+export { default as WardenPassHistoryPage } from './WardenPassHistoryPage';
+export { default as WardenReportsPage } from './WardenReportsPage';
+export { default as SecurityDashboard } from './SecurityDashboard';
+export { default as SecurityNoticeBoardPage } from './SecurityNoticeBoardPage';
+export { default as SecurityVerificationQueuePage } from './SecurityVerificationQueuePage';
+export { default as SecurityActivePassesPage } from './SecurityActivePassesPage';
+export { default as LoginPage } from './LoginPage';
+export { default as ProfilePage } from './ProfilePage';
