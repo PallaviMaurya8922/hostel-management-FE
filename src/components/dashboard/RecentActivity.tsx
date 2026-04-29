@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   CheckCircleIcon,
@@ -8,6 +8,7 @@ import {
   UserGroupIcon,
   WrenchScrewdriverIcon,
   ChevronRightIcon,
+  ChevronDownIcon,
   BellAlertIcon,
   CalendarDaysIcon,
   ClipboardDocumentListIcon,
@@ -220,6 +221,7 @@ export const RecentActivityPanel = ({
 
 export const RecentActivity = () => {
   const { leaves, guests, maintenance } = useAllRequests();
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const summary = useMemo(() => {
     const latestByCategory = <T extends { created_at: string; updated_at: string }>(items: T[]) =>
@@ -235,10 +237,49 @@ export const RecentActivity = () => {
       icon: typeof CheckCircleIcon;
       iconClass: string;
       chipClass: string;
+      statusTimeline: Array<{
+        label: string;
+        timestamp: string;
+        completed: boolean;
+        icon: typeof CheckCircleIcon;
+        iconClass: string;
+      }>;
     }>;
 
     const latestLeave = latestByCategory(leaves.data || []);
     if (latestLeave) {
+      const timeline = [
+        {
+          label: 'Request Submitted',
+          timestamp: latestLeave.created_at,
+          completed: true,
+          icon: DocumentTextIcon,
+          iconClass: 'text-brand-600',
+        },
+        ...(latestLeave.parent_approval !== null
+          ? [
+              {
+                label: 'Parent Approved',
+                timestamp: latestLeave.parent_response_at || latestLeave.updated_at,
+                completed: latestLeave.parent_approval === true,
+                icon: latestLeave.parent_approval === true ? CheckCircleIcon : XCircleIcon,
+                iconClass: latestLeave.parent_approval === true ? 'text-emerald-600' : 'text-red-600',
+              },
+            ]
+          : []),
+        ...(latestLeave.status === 'approved' || latestLeave.status === 'rejected'
+          ? [
+              {
+                label: latestLeave.status === 'approved' ? 'Warden Approval' : 'Warden Rejected',
+                timestamp: latestLeave.updated_at,
+                completed: latestLeave.status === 'approved',
+                icon: latestLeave.status === 'approved' ? CheckCircleIcon : XCircleIcon,
+                iconClass: latestLeave.status === 'approved' ? 'text-emerald-600' : 'text-red-600',
+              },
+            ]
+          : []),
+      ];
+
       recentActions.push({
         id: `leave-${latestLeave.absence_id}`,
         title: latestLeave.status === 'approved' ? 'Leave request approved' : latestLeave.status === 'rejected' ? 'Leave request rejected' : 'Leave request submitted',
@@ -253,30 +294,121 @@ export const RecentActivity = () => {
         icon: latestLeave.status === 'approved' ? CheckCircleIcon : latestLeave.status === 'rejected' ? XCircleIcon : DocumentTextIcon,
         iconClass: latestLeave.status === 'approved' ? 'text-emerald-600' : latestLeave.status === 'rejected' ? 'text-red-600' : 'text-brand-600',
         chipClass: latestLeave.status === 'approved' ? 'bg-emerald-50 text-emerald-700' : latestLeave.status === 'rejected' ? 'bg-red-50 text-red-700' : 'bg-brand-50 text-brand-700',
+        statusTimeline: timeline,
       });
     }
 
     const latestGuest = latestByCategory(guests.data || []);
     if (latestGuest) {
+      const timeline = [
+        {
+          label: 'Request Submitted',
+          timestamp: latestGuest.created_at,
+          completed: true,
+          icon: UserGroupIcon,
+          iconClass: 'text-brand-600',
+        },
+        ...(latestGuest.status === 'approved'
+          ? [
+              {
+                label: 'Warden Approval',
+                timestamp: latestGuest.updated_at,
+                completed: true,
+                icon: CheckCircleIcon,
+                iconClass: 'text-emerald-600',
+              },
+            ]
+          : latestGuest.status === 'rejected'
+            ? [
+                {
+                  label: 'Warden Rejected',
+                  timestamp: latestGuest.updated_at,
+                  completed: false,
+                  icon: XCircleIcon,
+                  iconClass: 'text-red-600',
+                },
+              ]
+            : []),
+      ];
+
       recentActions.push({
         id: `guest-${latestGuest.request_id}`,
-        title: latestGuest.status === 'approved' ? 'Guest request approved' : latestGuest.status === 'rejected' ? 'Guest request rejected' : 'Guest request submitted',
-        detail: latestGuest.status === 'approved'
-          ? latestGuest.approved_by_name
-            ? `Guest ${latestGuest.guest_name} approved by ${latestGuest.approved_by_name}`
-            : `Guest ${latestGuest.guest_name} approved`
-          : latestGuest.status === 'rejected'
-            ? `Guest ${latestGuest.guest_name} was not approved`
-            : `Guest ${latestGuest.guest_name} added for ${latestGuest.visit_type === 'overnight' ? 'overnight stay' : 'normal visit'}`,
-        timestamp: latestGuest.status === 'approved' || latestGuest.status === 'rejected' ? latestGuest.updated_at : latestGuest.created_at,
-        icon: latestGuest.status === 'approved' ? CheckCircleIcon : latestGuest.status === 'rejected' ? XCircleIcon : UserGroupIcon,
-        iconClass: latestGuest.status === 'approved' ? 'text-emerald-600' : latestGuest.status === 'rejected' ? 'text-red-600' : 'text-brand-600',
-        chipClass: latestGuest.status === 'approved' ? 'bg-emerald-50 text-emerald-700' : latestGuest.status === 'rejected' ? 'bg-red-50 text-red-700' : 'bg-brand-50 text-brand-700',
+        title:
+          latestGuest.status === 'approved'
+            ? 'Guest request approved'
+            : latestGuest.status === 'rejected'
+              ? 'Guest request rejected'
+              : 'Guest request submitted',
+        detail:
+          latestGuest.status === 'approved'
+            ? latestGuest.approved_by_name
+              ? `Guest ${latestGuest.guest_name} approved by ${latestGuest.approved_by_name}`
+              : `Guest ${latestGuest.guest_name} approved`
+            : latestGuest.status === 'rejected'
+              ? `Guest ${latestGuest.guest_name} was not approved`
+              : `Guest ${latestGuest.guest_name} added for ${
+                  latestGuest.visit_type === 'overnight' ? 'overnight stay' : 'normal visit'
+                }`,
+        timestamp:
+          latestGuest.status === 'approved' || latestGuest.status === 'rejected'
+            ? latestGuest.updated_at
+            : latestGuest.created_at,
+        icon:
+          latestGuest.status === 'approved'
+            ? CheckCircleIcon
+            : latestGuest.status === 'rejected'
+              ? XCircleIcon
+              : UserGroupIcon,
+        iconClass:
+          latestGuest.status === 'approved'
+            ? 'text-emerald-600'
+            : latestGuest.status === 'rejected'
+              ? 'text-red-600'
+              : 'text-brand-600',
+        chipClass:
+          latestGuest.status === 'approved'
+            ? 'bg-emerald-50 text-emerald-700'
+            : latestGuest.status === 'rejected'
+              ? 'bg-red-50 text-red-700'
+              : 'bg-brand-50 text-brand-700',
+        statusTimeline: timeline,
       });
     }
 
     const latestMaintenance = latestByCategory(maintenance.data || []);
     if (latestMaintenance) {
+      const timeline = [
+        {
+          label: 'Complaint Reported',
+          timestamp: latestMaintenance.created_at,
+          completed: true,
+          icon: WrenchScrewdriverIcon,
+          iconClass: 'text-amber-600',
+        },
+        ...(latestMaintenance.status === 'assigned' || latestMaintenance.status === 'in_progress'
+          ? [
+              {
+                label: 'Work In Progress',
+                timestamp: latestMaintenance.updated_at,
+                completed: false,
+                icon: ClockIcon,
+                iconClass: 'text-brand-600',
+              },
+            ]
+          : []),
+        ...(latestMaintenance.status === 'completed'
+          ? [
+              {
+                label: 'Complaint Resolved',
+                timestamp: latestMaintenance.actual_completion || latestMaintenance.updated_at,
+                completed: true,
+                icon: CheckCircleIcon,
+                iconClass: 'text-emerald-600',
+              },
+            ]
+          : []),
+      ];
+
       recentActions.push({
         id: `maintenance-${latestMaintenance.request_id}`,
         title:
@@ -313,6 +445,7 @@ export const RecentActivity = () => {
             : latestMaintenance.status === 'assigned' || latestMaintenance.status === 'in_progress'
               ? 'bg-brand-50 text-brand-700'
               : 'bg-amber-50 text-amber-700',
+        statusTimeline: timeline,
       });
     }
 
@@ -397,7 +530,7 @@ export const RecentActivity = () => {
     <div className="bg-white rounded-2xl border border-surface-200/80 shadow-glass-sm p-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between mb-5">
         <div>
-          <h2 className="text-base font-semibold text-slate-800">Your Recent Actions</h2>
+          <h2 className="text-lg font-semibold text-slate-800">Your Recent Actions</h2>
           <p className="text-sm text-slate-500 mt-1">Latest updates and what is coming next</p>
         </div>
         <div className="flex w-full flex-wrap items-center justify-end gap-2 sm:gap-3 lg:w-auto lg:shrink-0">
@@ -419,7 +552,7 @@ export const RecentActivity = () => {
       <div className="grid gap-4 lg:grid-cols-[1.5fr_1fr]">
         <section className="rounded-2xl border border-surface-200 bg-slate-50/60 p-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-slate-800">Recent Actions</h3>
+            <h3 className="text-base font-semibold text-slate-800">Recent Actions</h3>
             {summary.actions.length > 0 ? (
               <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
                 {summary.actions.length} {summary.actions.length === 1 ? 'item' : 'items'}
@@ -431,30 +564,74 @@ export const RecentActivity = () => {
             <p className="text-sm text-slate-500 py-4">No recent actions yet.</p>
           ) : (
             <div className="space-y-2">
-              {summary.actions.map(item => (
-                <div key={item.id} className="flex items-start gap-3 rounded-xl bg-white p-3 border border-surface-100">
-                  <div className={`w-10 h-10 rounded-xl ${item.chipClass} flex items-center justify-center shrink-0`}>
-                    <item.icon className={`h-5 w-5 ${item.iconClass}`} aria-hidden="true" />
+              {summary.actions.map(item => {
+                const isExpanded = expandedId === item.id;
+                return (
+                  <div
+                    key={item.id}
+                    className="rounded-xl bg-white border border-surface-100 transition-all"
+                  >
+                    <button
+                      onClick={() => setExpandedId(isExpanded ? null : item.id)}
+                      className="w-full flex items-start gap-3 p-3 transition-all hover:bg-cyan-50/40 text-left"
+                    >
+                      <div className={`w-10 h-10 rounded-xl ${item.chipClass} flex items-center justify-center shrink-0`}>
+                        <item.icon className={`h-5 w-5 ${item.iconClass}`} aria-hidden="true" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-3">
+                          <p className="text-sm font-semibold text-slate-800 truncate">{item.title}</p>
+                          {isExpanded ? (
+                            <ChevronDownIcon className="h-4 w-4 text-cyan-600 shrink-0 transition-transform" />
+                          ) : (
+                            <ChevronRightIcon className="h-4 w-4 text-slate-300 shrink-0 transition-transform" />
+                          )}
+                        </div>
+                        <p className="text-sm text-slate-600 mt-0.5 line-clamp-1">{item.detail}</p>
+                        <time dateTime={item.timestamp} className="text-xs text-slate-400 mt-1 block">
+                          {formatRelativeTime(item.timestamp)}
+                        </time>
+                      </div>
+                    </button>
+
+                    {isExpanded && (
+                      <div className="border-t border-surface-100 px-3 py-3 bg-slate-50/40">
+                        <div className="flex gap-4 overflow-x-auto pb-2">
+                          {item.statusTimeline.map((step, idx) => (
+                            <div key={idx} className="flex flex-col items-center min-w-max gap-2">
+                              <div
+                                className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                                  step.completed
+                                    ? 'bg-emerald-100'
+                                    : 'bg-slate-100'
+                                }`}
+                              >
+                                <step.icon
+                                  className={`h-4 w-4 ${step.completed ? step.iconClass : 'text-slate-400'}`}
+                                  aria-hidden="true"
+                                />
+                              </div>
+                              <div className="text-center">
+                                <p className="text-xs font-medium text-slate-700 whitespace-nowrap">{step.label}</p>
+                                <time className="text-xs text-slate-500 mt-0.5 block">
+                                  {formatDate(step.timestamp)}
+                                </time>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="text-sm font-semibold text-slate-800 truncate">{item.title}</p>
-                      <ChevronRightIcon className="h-4 w-4 text-slate-300 shrink-0" />
-                    </div>
-                    <p className="text-sm text-slate-600 mt-0.5 line-clamp-1">{item.detail}</p>
-                    <time dateTime={item.timestamp} className="text-xs text-slate-400 mt-1 block">
-                      {formatRelativeTime(item.timestamp)}
-                    </time>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </section>
 
         <section className="rounded-2xl border border-surface-200 bg-white p-4">
           <div className="mb-3">
-            <h3 className="text-sm font-semibold text-slate-800">Upcoming</h3>
+            <h3 className="text-base font-semibold text-slate-800">Upcoming</h3>
           </div>
 
           {summary.upcomingItems.length === 0 ? (

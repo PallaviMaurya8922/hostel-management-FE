@@ -387,9 +387,9 @@ const StudentRequestHistoryPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <AppShell showSearch>
-        <div className="mx-auto flex h-[calc(100dvh-5.5rem)] min-h-[280px] w-full max-w-screen-xl flex-col px-3 py-2 sm:px-5 lg:px-6">
-          <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-surface-200/90 bg-white shadow-md ring-1 ring-slate-900/[0.04] dark:border-slate-700 dark:bg-slate-900/50 dark:ring-white/[0.06]">
+      <AppShell>
+        <div className="mx-auto flex h-[calc(100dvh-5.5rem)] min-h-[280px] w-full max-w-screen-xl flex-col p-3 sm:p-5 lg:p-6 pb:0">
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-sm border border-surface-200/90 bg-white shadow-md ring-1 ring-slate-900/[0.04] dark:border-slate-700 dark:bg-slate-900/50 dark:ring-white/[0.06]">
             <Skeleton height="48px" className="rounded-none border-b border-surface-200" />
             <div className="min-h-0 flex-1 p-4">
               <Skeleton height="100%" className="min-h-[200px]" />
@@ -401,9 +401,9 @@ const StudentRequestHistoryPage: React.FC = () => {
   }
 
   return (
-    <AppShell showSearch>
-      <div className="mx-auto flex h-[calc(100dvh-5.5rem)] min-h-[320px] w-full max-w-screen-xl flex-col px-3 py-2 sm:px-5 lg:px-6">
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-surface-200/90 bg-white shadow-md ring-1 ring-slate-900/[0.04] dark:border-slate-700 dark:bg-slate-900/50 dark:ring-white/[0.06]">
+    <AppShell>
+      <div className="mx-auto flex h-[calc(100dvh-5.5rem)] min-h-[320px] w-full max-w-screen-xl flex-col px-0 py-0 sm:px-2 sm:pt-2 lg:px-2 lg:pt-2">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-sm border border-surface-200/90 bg-white shadow-md ring-1 ring-slate-900/[0.04] dark:border-slate-700 dark:bg-slate-900/50 dark:ring-white/[0.06]">
           <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-surface-200/90 bg-gradient-to-r from-slate-50/95 to-white px-4 py-2 dark:border-slate-700 dark:from-slate-900 dark:to-slate-900/80">
             <h1 className="text-base font-semibold tracking-tight text-slate-800 dark:text-slate-100">
               All requests

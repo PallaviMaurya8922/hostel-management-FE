@@ -82,7 +82,7 @@ interface AppShellProps {
   children: React.ReactNode;
   /** Optional context under the time-based greeting (e.g. "Warden Operations"). */
   pageTitle?: string;
-  showSearch?: boolean;
+  // showSearch?: boolean;
   showTopRefresh?: boolean;
   onTopRefresh?: () => void | Promise<void>;
   topRefreshLoading?: boolean;
