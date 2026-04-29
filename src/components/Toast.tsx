@@ -45,15 +45,15 @@ const Toast: React.FC = () => {
   };
 
   return (
-    <div className="fixed top-4 right-4 z-50 space-y-2" aria-live="polite">
+    <div className="fixed inset-x-3 top-3 z-50 space-y-2 sm:inset-x-auto sm:right-4 sm:top-4" aria-live="polite">
       {toasts.map(toast => (
         <div
           key={toast.id}
-          className={`flex items-center gap-3 px-4 py-3 rounded-xl shadow-glass min-w-[300px] max-w-md animate-slideIn border ${getToastStyles(toast.type)}`}
+          className={`flex w-full items-start gap-3 px-4 py-3 rounded-xl shadow-glass min-w-0 sm:min-w-[300px] sm:max-w-md animate-slideIn border ${getToastStyles(toast.type)}`}
           role="alert"
         >
           {getToastIcon(toast.type)}
-          <span className="flex-1 text-sm font-medium">{toast.message}</span>
+          <span className="min-w-0 flex-1 break-words text-sm font-medium">{toast.message}</span>
           <button
             onClick={() => removeToast(toast.id)}
             className="text-current hover:opacity-70 transition-opacity focus:outline-none rounded-lg p-0.5"

@@ -86,7 +86,7 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-slate-50">
+    <div className="min-h-screen flex flex-col bg-slate-50 lg:flex-row">
       <div className="hidden lg:flex lg:w-[46%] bg-[#0f1729] relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-20 -left-10 w-72 h-72 rounded-full bg-cyan-500/10 blur-3xl" />
@@ -164,12 +164,12 @@ const LoginPage: React.FC = () => {
       </div>
 
       {/* Right: login form */}
-      <div className="flex flex-1 flex-col bg-white px-4 py-6 sm:py-8">
+      <div className="flex flex-1 flex-col bg-white px-4 py-6 sm:px-6 sm:py-8">
         <div className="mx-auto flex w-full max-w-[420px] justify-end pb-2">
           <ThemeToggle variant="toolbar" />
         </div>
-        <div className="flex flex-1 items-center justify-center">
-        <div className="w-full max-w-[420px]">
+        <div className="flex flex-1 items-center justify-center pb-8 lg:pb-0">
+          <div className="w-full max-w-[420px]">
           {/* Mobile logo */}
           <div className="flex items-center gap-2.5 mb-8 lg:hidden">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
@@ -188,7 +188,7 @@ const LoginPage: React.FC = () => {
           <form onSubmit={handleLogin} className="space-y-[26px]">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">Select role</label>
-              <div className="grid grid-cols-5 gap-2.5">
+              <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5">
                 {(Object.entries(ROLE_CONFIG) as [UserRole, typeof ROLE_CONFIG.student][]).map(([role, config]) => {
                   const isSelected = selectedRole === role;
                   return (
@@ -196,7 +196,7 @@ const LoginPage: React.FC = () => {
                       key={role}
                       type="button"
                       onClick={() => setSelectedRole(role)}
-                      className={`flex flex-col items-center gap-1.5 h-[56px] justify-center rounded-[10px] border text-xs font-medium transition-all duration-200 ${
+                      className={`flex h-[58px] flex-col items-center justify-center gap-1.5 rounded-[10px] border text-xs font-medium transition-all duration-200 sm:h-[56px] ${
                         isSelected
                           ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm ring-1 ring-blue-100'
                           : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:bg-white'
@@ -306,7 +306,7 @@ const LoginPage: React.FC = () => {
                   Contact Administrator
                 </button>
               </p>
-              <div className="flex items-center justify-center gap-3 text-xs text-slate-400">
+              <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-slate-400">
                 <button type="button" className="hover:text-slate-600">Terms of Service</button>
                 <span>·</span>
                 <button type="button" className="hover:text-slate-600">Privacy Policy</button>

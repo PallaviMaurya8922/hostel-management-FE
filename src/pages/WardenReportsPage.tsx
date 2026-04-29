@@ -299,49 +299,94 @@ const WardenReportsPage: React.FC = () => {
               )}
 
               {!isPresentLoading && filteredStudents.length > 0 && (
-                <div className="overflow-x-auto">
-                  <table className="min-w-full text-sm">
-                    <thead>
-                      <tr className="text-left text-slate-600 border-b border-surface-200">
-                        <th className="py-3 pr-3">Student</th>
-                        <th className="py-3 pr-3">ID</th>
-                        <th className="py-3 pr-3">Room</th>
-                        <th className="py-3 pr-3">Block</th>
-                        <th className="py-3 pr-3">Contact Number</th>
-                        <th className="py-3 pr-3">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredStudents.map(student => (
-                        <tr key={student.student_id} className="border-b border-surface-100">
-                          <td className="py-3 pr-3 font-medium text-slate-900">{student.name}</td>
-                          <td className="py-3 pr-3">{student.student_id}</td>
-                          <td className="py-3 pr-3">{student.room_number}</td>
-                          <td className="py-3 pr-3">{student.block}</td>
-                          <td className="py-3 pr-3">{student.phone || '-'}</td>
-                          <td className="py-3 pr-3">
-                            <div className="flex items-center gap-2">
-                              <Button size="small" variant="secondary" onClick={() => handleOpenEdit(student)}>
-                                Edit
-                              </Button>
-                              <Button
-                                size="small"
-                                variant="danger"
-                                className="bg-red-500 hover:bg-red-600 active:bg-red-700"
-                                onClick={() => {
-                                  setDeletingStudent(student);
-                                  setDeleteReason('');
-                                }}
-                              >
-                                Delete
-                              </Button>
+                <>
+                  <div className="space-y-3 lg:hidden">
+                    {filteredStudents.map(student => (
+                      <div key={`${student.student_id}-mobile`} className="rounded-2xl border border-surface-200/80 p-4">
+                        <div className="flex flex-col gap-3">
+                          <div>
+                            <p className="text-sm font-semibold text-slate-900">{student.name}</p>
+                            <p className="mt-1 text-xs text-slate-500">{student.student_id}</p>
+                          </div>
+                          <dl className="grid grid-cols-1 gap-3 text-sm text-slate-600 sm:grid-cols-2">
+                            <div>
+                              <dt className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Room</dt>
+                              <dd className="mt-1">{student.room_number}</dd>
                             </div>
-                          </td>
+                            <div>
+                              <dt className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Block</dt>
+                              <dd className="mt-1">{student.block}</dd>
+                            </div>
+                            <div className="sm:col-span-2">
+                              <dt className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Contact</dt>
+                              <dd className="mt-1 break-words">{student.phone || '-'}</dd>
+                            </div>
+                          </dl>
+                          <div className="flex flex-col gap-2 sm:flex-row">
+                            <Button size="small" variant="secondary" onClick={() => handleOpenEdit(student)}>
+                              Edit
+                            </Button>
+                            <Button
+                              size="small"
+                              variant="danger"
+                              className="bg-red-500 hover:bg-red-600 active:bg-red-700"
+                              onClick={() => {
+                                setDeletingStudent(student);
+                                setDeleteReason('');
+                              }}
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="hidden overflow-x-auto lg:block">
+                    <table className="min-w-full text-sm">
+                      <thead>
+                        <tr className="text-left text-slate-600 border-b border-surface-200">
+                          <th className="py-3 pr-3">Student</th>
+                          <th className="py-3 pr-3">ID</th>
+                          <th className="py-3 pr-3">Room</th>
+                          <th className="py-3 pr-3">Block</th>
+                          <th className="py-3 pr-3">Contact Number</th>
+                          <th className="py-3 pr-3">Actions</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody>
+                        {filteredStudents.map(student => (
+                          <tr key={student.student_id} className="border-b border-surface-100">
+                            <td className="py-3 pr-3 font-medium text-slate-900">{student.name}</td>
+                            <td className="py-3 pr-3">{student.student_id}</td>
+                            <td className="py-3 pr-3">{student.room_number}</td>
+                            <td className="py-3 pr-3">{student.block}</td>
+                            <td className="py-3 pr-3">{student.phone || '-'}</td>
+                            <td className="py-3 pr-3">
+                              <div className="flex items-center gap-2">
+                                <Button size="small" variant="secondary" onClick={() => handleOpenEdit(student)}>
+                                  Edit
+                                </Button>
+                                <Button
+                                  size="small"
+                                  variant="danger"
+                                  className="bg-red-500 hover:bg-red-600 active:bg-red-700"
+                                  onClick={() => {
+                                    setDeletingStudent(student);
+                                    setDeleteReason('');
+                                  }}
+                                >
+                                  Delete
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
               )}
           </div>
         </div>
@@ -352,7 +397,7 @@ const WardenReportsPage: React.FC = () => {
         onClose={() => setEditingStudent(null)}
         title={`Edit Student (${editingStudent?.student_id || ''})`}
         footer={
-          <div className="flex items-center justify-end gap-4 w-full">
+          <div className="flex w-full flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end">
             <Button variant="secondary" onClick={() => setEditingStudent(null)}>
               Cancel
             </Button>

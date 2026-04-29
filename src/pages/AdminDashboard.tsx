@@ -341,82 +341,117 @@ const AdminDashboard: React.FC = () => {
                   {[1, 2, 3, 4, 5].map(i => <Skeleton key={i} height="48px" />)}
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left">
-                    <thead>
-                      <tr className="border-b border-surface-200">
-                        <th className="px-5 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">User</th>
-                        <th className="px-5 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Role</th>
-                        <th className="px-5 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
-                        <th className="px-5 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Identifier</th>
-                        <th className="px-5 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider text-right">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {staff.map(s => (
-                        <tr key={`staff-${s.staff_id}`} className="border-b border-surface-200 last:border-0">
-                          <td className="px-5 py-3.5">
-                            <p className="text-sm font-medium text-slate-800">{s.name}</p>
-                            <p className="text-xs text-slate-400">{s.email}</p>
-                          </td>
-                          <td className="px-5 py-3.5">
-                            <Badge variant={getRoleBadgeVariant(s.role)} size="small">
-                              {formatRoleLabel(s.role)}
-                            </Badge>
-                          </td>
-                          <td className="px-5 py-3.5">
-                            <Badge variant="success" size="small">Active</Badge>
-                          </td>
-                          <td className="px-5 py-3.5 text-sm text-slate-400">{s.staff_id}</td>
-                          <td className="px-5 py-3.5 text-right">
-                            <button
-                              onClick={() => setDeleteTarget({ type: 'staff', id: s.staff_id, name: s.name })}
-                              className="inline-flex items-center gap-1 text-xs text-red-500 hover:text-red-700 transition-colors"
-                              aria-label={`Delete ${s.name}`}
-                              disabled={s.staff_id === user?.id}
-                              title={s.staff_id === user?.id ? 'You cannot delete your own account' : 'Delete staff account'}
-                            >
-                              <TrashIcon className="w-4 h-4" />
-                            </button>
-                          </td>
+                <>
+                  <div className="space-y-3 p-4 lg:hidden">
+                    {staff.map(s => (
+                      <UserListCard
+                        key={`staff-card-${s.staff_id}`}
+                        title={s.name}
+                        subtitle={s.email}
+                        identifier={s.staff_id}
+                        roleLabel={formatRoleLabel(s.role)}
+                        roleVariant={getRoleBadgeVariant(s.role)}
+                        onDelete={() => setDeleteTarget({ type: 'staff', id: s.staff_id, name: s.name })}
+                        deleteLabel="Delete staff"
+                        deleteDisabled={s.staff_id === user?.id}
+                      />
+                    ))}
+                    {students.map(s => (
+                      <UserListCard
+                        key={`student-card-${s.student_id}`}
+                        title={s.name}
+                        subtitle={`Room ${s.room_number}, Block ${s.block}`}
+                        identifier={s.student_id}
+                        roleLabel="Student"
+                        roleVariant="info"
+                        onDelete={() => setDeleteTarget({ type: 'student', id: s.student_id, name: s.name })}
+                        deleteLabel="Delete student"
+                      />
+                    ))}
+                    {staff.length === 0 && students.length === 0 && (
+                      <div className="rounded-2xl border border-dashed border-surface-300 px-5 py-10 text-center text-sm text-slate-400">
+                        No users found.
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="hidden overflow-x-auto lg:block">
+                    <table className="w-full text-left">
+                      <thead>
+                        <tr className="border-b border-surface-200">
+                          <th className="px-5 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">User</th>
+                          <th className="px-5 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Role</th>
+                          <th className="px-5 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
+                          <th className="px-5 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Identifier</th>
+                          <th className="px-5 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider text-right">Actions</th>
                         </tr>
-                      ))}
-                      {students.map(s => (
-                        <tr key={`stu-${s.student_id}`} className="border-b border-surface-200 last:border-0">
-                          <td className="px-5 py-3.5">
-                            <p className="text-sm font-medium text-slate-800">{s.name}</p>
-                            <p className="text-xs text-slate-400">
-                              Room {s.room_number}, Block {s.block}
-                            </p>
-                          </td>
-                          <td className="px-5 py-3.5">
-                            <Badge variant="info" size="small">Student</Badge>
-                          </td>
-                          <td className="px-5 py-3.5">
-                            <Badge variant="success" size="small">Active</Badge>
-                          </td>
-                          <td className="px-5 py-3.5 text-sm text-slate-400">{s.student_id}</td>
-                          <td className="px-5 py-3.5 text-right">
-                            <button
-                              onClick={() => setDeleteTarget({ type: 'student', id: s.student_id, name: s.name })}
-                              className="inline-flex items-center gap-1 text-xs text-red-500 hover:text-red-700 transition-colors"
-                              aria-label={`Delete ${s.name}`}
-                            >
-                              <TrashIcon className="w-4 h-4" />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                      {staff.length === 0 && students.length === 0 && (
-                        <tr>
-                          <td colSpan={5} className="px-5 py-10 text-center text-sm text-slate-400">
-                            No users found.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody>
+                        {staff.map(s => (
+                          <tr key={`staff-${s.staff_id}`} className="border-b border-surface-200 last:border-0">
+                            <td className="px-5 py-3.5">
+                              <p className="text-sm font-medium text-slate-800">{s.name}</p>
+                              <p className="text-xs text-slate-400">{s.email}</p>
+                            </td>
+                            <td className="px-5 py-3.5">
+                              <Badge variant={getRoleBadgeVariant(s.role)} size="small">
+                                {formatRoleLabel(s.role)}
+                              </Badge>
+                            </td>
+                            <td className="px-5 py-3.5">
+                              <Badge variant="success" size="small">Active</Badge>
+                            </td>
+                            <td className="px-5 py-3.5 text-sm text-slate-400">{s.staff_id}</td>
+                            <td className="px-5 py-3.5 text-right">
+                              <button
+                                onClick={() => setDeleteTarget({ type: 'staff', id: s.staff_id, name: s.name })}
+                                className="inline-flex items-center gap-1 text-xs text-red-500 hover:text-red-700 transition-colors"
+                                aria-label={`Delete ${s.name}`}
+                                disabled={s.staff_id === user?.id}
+                                title={s.staff_id === user?.id ? 'You cannot delete your own account' : 'Delete staff account'}
+                              >
+                                <TrashIcon className="w-4 h-4" />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                        {students.map(s => (
+                          <tr key={`stu-${s.student_id}`} className="border-b border-surface-200 last:border-0">
+                            <td className="px-5 py-3.5">
+                              <p className="text-sm font-medium text-slate-800">{s.name}</p>
+                              <p className="text-xs text-slate-400">
+                                Room {s.room_number}, Block {s.block}
+                              </p>
+                            </td>
+                            <td className="px-5 py-3.5">
+                              <Badge variant="info" size="small">Student</Badge>
+                            </td>
+                            <td className="px-5 py-3.5">
+                              <Badge variant="success" size="small">Active</Badge>
+                            </td>
+                            <td className="px-5 py-3.5 text-sm text-slate-400">{s.student_id}</td>
+                            <td className="px-5 py-3.5 text-right">
+                              <button
+                                onClick={() => setDeleteTarget({ type: 'student', id: s.student_id, name: s.name })}
+                                className="inline-flex items-center gap-1 text-xs text-red-500 hover:text-red-700 transition-colors"
+                                aria-label={`Delete ${s.name}`}
+                              >
+                                <TrashIcon className="w-4 h-4" />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                        {staff.length === 0 && students.length === 0 && (
+                          <tr>
+                            <td colSpan={5} className="px-5 py-10 text-center text-sm text-slate-400">
+                              No users found.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
               )}
             </div>
           </section>
@@ -429,7 +464,7 @@ const AdminDashboard: React.FC = () => {
         onClose={() => setIsCreateOpen(false)}
         title="Add New User"
         footer={
-          <div className="flex items-center justify-end gap-3 w-full">
+          <div className="flex w-full flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end">
             <Button variant="secondary" onClick={() => setIsCreateOpen(false)}>Cancel</Button>
             <Button type="submit" form="admin-create-staff" loading={isCreating}>Create Account</Button>
           </div>
@@ -519,3 +554,55 @@ const AdminDashboard: React.FC = () => {
 };
 
 export default AdminDashboard;
+
+interface UserListCardProps {
+  title: string;
+  subtitle: string;
+  identifier: string;
+  roleLabel: string;
+  roleVariant: BadgeVariant;
+  onDelete: () => void;
+  deleteLabel: string;
+  deleteDisabled?: boolean;
+}
+
+const UserListCard: React.FC<UserListCardProps> = ({
+  title,
+  subtitle,
+  identifier,
+  roleLabel,
+  roleVariant,
+  onDelete,
+  deleteLabel,
+  deleteDisabled = false,
+}) => (
+  <div className="rounded-2xl border border-surface-200/80 p-4 shadow-glass-sm">
+    <div className="flex items-start justify-between gap-3">
+      <div className="min-w-0">
+        <p className="text-sm font-semibold text-slate-800">{title}</p>
+        <p className="mt-1 break-words text-xs text-slate-500">{subtitle}</p>
+      </div>
+      <Badge variant="success" size="small">Active</Badge>
+    </div>
+
+    <div className="mt-4 flex flex-wrap items-center gap-2">
+      <Badge variant={roleVariant} size="small">
+        {roleLabel}
+      </Badge>
+      <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-600">
+        {identifier}
+      </span>
+    </div>
+
+    <Button
+      size="small"
+      variant="danger"
+      onClick={onDelete}
+      disabled={deleteDisabled}
+      icon={<TrashIcon className="w-4 h-4" />}
+      className="mt-4 w-full justify-center"
+    >
+      {deleteLabel}
+    </Button>
+  </div>
+);

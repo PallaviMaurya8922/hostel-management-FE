@@ -82,7 +82,7 @@ interface AppShellProps {
   children: React.ReactNode;
   /** Optional context under the time-based greeting (e.g. "Warden Operations"). */
   pageTitle?: string;
-  // showSearch?: boolean;
+  showSearch?: boolean;
   showTopRefresh?: boolean;
   onTopRefresh?: () => void | Promise<void>;
   topRefreshLoading?: boolean;
@@ -355,7 +355,7 @@ const AppShell: React.FC<AppShellProps> = ({
         }`}
       >
         {/* Top bar */}
-        <header className="sticky top-0 z-20 min-h-16 bg-white border-b border-surface-200/60 px-4 lg:px-6 flex items-center justify-between gap-4 py-2">
+        <header className="sticky top-0 z-20 min-h-16 bg-white border-b border-surface-200/60 px-3 sm:px-4 lg:px-6 flex items-center justify-between gap-2 sm:gap-4 py-2">
           <div className="flex items-center gap-2 min-w-0 flex-1">
             <button
               type="button"
@@ -389,7 +389,7 @@ const AppShell: React.FC<AppShellProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0 sm:gap-3">
+          <div className="flex items-center gap-1.5 shrink-0 sm:gap-3">
             <ThemeToggle variant="toolbar" />
             {showSearch && (
               <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-surface-100 rounded-xl border border-surface-200 w-56">
@@ -410,11 +410,12 @@ const AppShell: React.FC<AppShellProps> = ({
                   void onTopRefresh();
                 }}
                 disabled={topRefreshLoading}
-                className="inline-flex items-center gap-2 rounded-xl border border-surface-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-surface-100 disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex items-center gap-2 rounded-xl border border-surface-200 bg-white px-2.5 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-surface-100 disabled:cursor-not-allowed disabled:opacity-60 sm:px-3"
                 aria-label={topRefreshLabel}
               >
                 <ArrowPathIcon className={`w-4 h-4 ${topRefreshLoading ? 'animate-spin' : ''}`} />
-                {topRefreshLabel}
+                <span className="hidden sm:inline">{topRefreshLabel}</span>
+                <span className="sm:hidden">Refresh</span>
               </button>
             ) : null}
             <div ref={notificationsPopoverRef} className="relative">
