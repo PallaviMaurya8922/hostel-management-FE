@@ -256,7 +256,7 @@ const Dashboard: React.FC = () => {
 
   if (isLoading) {
     return (
-      <AppShell showSearch>
+      <AppShell>
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
           <Skeleton height="150px" />
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -269,7 +269,7 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <AppShell showSearch>
+    <AppShell>
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         
         {/* Top Grid: Stats and Quick Actions */}
