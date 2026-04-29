@@ -898,7 +898,7 @@ const MaintenanceDashboard: React.FC = () => {
 
   const renderListView = () => (
     <div className="overflow-hidden rounded-[28px] border border-surface-200/80 bg-white shadow-glass-sm dark:border-slate-700 dark:bg-slate-900/40">
-      <div className="grid grid-cols-[1.6fr_1fr_0.85fr_0.85fr_0.95fr_0.75fr] gap-4 border-b border-surface-200 px-5 py-3 text-xs font-medium uppercase tracking-wide text-slate-500 dark:border-slate-700 dark:text-slate-400">
+      <div className="hidden gap-4 border-b border-surface-200 px-5 py-3 text-xs font-medium uppercase tracking-wide text-slate-500 dark:border-slate-700 dark:text-slate-400 lg:grid lg:grid-cols-[1.6fr_1fr_0.85fr_0.85fr_0.95fr_0.75fr]">
         <span>Issue</span>
         <span>Location & category</span>
         <span>Priority</span>
@@ -930,37 +930,47 @@ const MaintenanceDashboard: React.FC = () => {
           paginatedFilteredRequests.map(request => (
             <div
               key={request.request_id}
-              className={`grid grid-cols-1 gap-3 px-5 py-4 lg:grid-cols-[1.6fr_1fr_0.85fr_0.85fr_0.95fr_0.75fr] lg:items-center ${
+              className={`grid grid-cols-1 gap-4 px-4 py-4 sm:px-5 lg:grid-cols-[1.6fr_1fr_0.85fr_0.85fr_0.95fr_0.75fr] lg:items-center ${
                 request.request_id === selectedRequestId ? 'bg-brand-50/50 dark:bg-brand-950/25' : ''
               }`}
             >
               <div>
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 lg:hidden">Issue</p>
                 <div className="flex flex-wrap items-center gap-2">
                   <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{getRequestTitle(request)}</p>
                 </div>
                 <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{truncate(request.description, 96)}</p>
               </div>
               <div className="text-sm text-slate-600 dark:text-slate-300">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 lg:hidden">Location & category</p>
                 <p>Room {roomLabel(request)}</p>
                 <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
                   {CATEGORY_LABELS[request.issue_type] || request.issue_type}
                 </p>
               </div>
               <div>
+                <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400 lg:hidden">Priority</p>
                 <Badge variant={(PRIORITY_CONFIG[request.priority] || PRIORITY_CONFIG.medium).variant} size="small">
                   {(PRIORITY_CONFIG[request.priority] || PRIORITY_CONFIG.medium).label}
                 </Badge>
               </div>
               <div>
+                <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400 lg:hidden">Status</p>
                 <Badge variant={getMaintenanceStatusBadgeVariant(request)} size="small">
                   {getMaintenanceStatusLabel(request)}
                 </Badge>
               </div>
               <div className="text-sm text-slate-600 dark:text-slate-300">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 lg:hidden">Assignee</p>
                 {request.assigned_to_name || 'Unassigned'}
               </div>
-              <div className="flex justify-end">
-                <Button size="small" variant="secondary" onClick={() => setSelectedRequestId(request.request_id)}>
+              <div className="flex justify-start lg:justify-end">
+                <Button
+                  size="small"
+                  variant="secondary"
+                  className="w-full justify-center lg:w-auto"
+                  onClick={() => setSelectedRequestId(request.request_id)}
+                >
                   View
                 </Button>
               </div>
@@ -1046,7 +1056,7 @@ const MaintenanceDashboard: React.FC = () => {
                       </button>
                     </div>
 
-                    <div className="relative min-w-[220px] flex-1 lg:min-w-[280px] lg:max-w-md">
+                    <div className="relative min-w-0 w-full flex-1 lg:min-w-[280px] lg:max-w-md">
                       <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                       <input
                         value={searchQuery}

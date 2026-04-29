@@ -145,57 +145,104 @@ const WardenPassHistoryPage: React.FC = () => {
               )}
 
               {!isLoading && history.length > 0 && (
-                <div className="overflow-x-auto">
-                  <table className="min-w-full text-sm">
-                    <thead>
-                      <tr className="text-left text-slate-600 border-b border-surface-200">
-                        <th className="py-3 pr-3">Student</th>
-                        <th className="py-3 pr-3">Room</th>
-                        <th className="py-3 pr-3">Pass ID</th>
-                        <th className="py-3 pr-3">Duration</th>
-                        <th className="py-3 pr-3">Status</th>
-                        <th className="py-3 pr-3">Approved By</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {history.map(item => (
-                        <tr key={`${item.pass_number}-${item.created_at}`} className="border-b border-surface-100">
-                          <td className="py-3 pr-3">
-                            <div className="font-medium text-slate-900">{item.student_name}</div>
-                            <div className="text-xs text-slate-500">{item.student_id}</div>
-                          </td>
-                          <td className="py-3 pr-3">{item.room_number}</td>
-                          <td className="py-3 pr-3">
-                            <div
-                              className="max-w-[180px] truncate text-xs text-slate-500 font-mono"
-                              title={item.pass_number}
-                            >
-                              {item.pass_number}
-                            </div>
-                          </td>
-                          <td className="py-3 pr-3">
-                            {item.from_date} to {item.to_date}
-                          </td>
-                          <td className="py-3 pr-3">
-                            <Badge
-                              variant={
-                                item.status === 'approved' || item.status === 'active'
-                                  ? 'success'
-                                  : item.status === 'pending'
-                                    ? 'warning'
-                                    : 'danger'
-                              }
-                              size="small"
-                            >
-                              {item.status}
-                            </Badge>
-                          </td>
-                          <td className="py-3 pr-3 text-slate-500">{item.approved_by}</td>
+                <>
+                  <div className="space-y-3 lg:hidden">
+                    {history.map(item => (
+                      <div
+                        key={`${item.pass_number}-${item.created_at}-mobile`}
+                        className="rounded-2xl border border-surface-200/80 p-4"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="text-sm font-semibold text-slate-900">{item.student_name}</p>
+                            <p className="mt-1 text-xs text-slate-500">
+                              {item.student_id} • Room {item.room_number}
+                            </p>
+                          </div>
+                          <Badge
+                            variant={
+                              item.status === 'approved' || item.status === 'active'
+                                ? 'success'
+                                : item.status === 'pending'
+                                  ? 'warning'
+                                  : 'danger'
+                            }
+                            size="small"
+                          >
+                            {item.status}
+                          </Badge>
+                        </div>
+
+                        <dl className="mt-4 grid grid-cols-1 gap-3 text-sm text-slate-600 sm:grid-cols-2">
+                          <div>
+                            <dt className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Pass ID</dt>
+                            <dd className="mt-1 break-all font-mono text-xs text-slate-600">{item.pass_number}</dd>
+                          </div>
+                          <div>
+                            <dt className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Approved by</dt>
+                            <dd className="mt-1">{item.approved_by || '—'}</dd>
+                          </div>
+                          <div className="sm:col-span-2">
+                            <dt className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Duration</dt>
+                            <dd className="mt-1">{item.from_date} to {item.to_date}</dd>
+                          </div>
+                        </dl>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="hidden overflow-x-auto lg:block">
+                    <table className="min-w-full text-sm">
+                      <thead>
+                        <tr className="text-left text-slate-600 border-b border-surface-200">
+                          <th className="py-3 pr-3">Student</th>
+                          <th className="py-3 pr-3">Room</th>
+                          <th className="py-3 pr-3">Pass ID</th>
+                          <th className="py-3 pr-3">Duration</th>
+                          <th className="py-3 pr-3">Status</th>
+                          <th className="py-3 pr-3">Approved By</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody>
+                        {history.map(item => (
+                          <tr key={`${item.pass_number}-${item.created_at}`} className="border-b border-surface-100">
+                            <td className="py-3 pr-3">
+                              <div className="font-medium text-slate-900">{item.student_name}</div>
+                              <div className="text-xs text-slate-500">{item.student_id}</div>
+                            </td>
+                            <td className="py-3 pr-3">{item.room_number}</td>
+                            <td className="py-3 pr-3">
+                              <div
+                                className="max-w-[180px] truncate text-xs text-slate-500 font-mono"
+                                title={item.pass_number}
+                              >
+                                {item.pass_number}
+                              </div>
+                            </td>
+                            <td className="py-3 pr-3">
+                              {item.from_date} to {item.to_date}
+                            </td>
+                            <td className="py-3 pr-3">
+                              <Badge
+                                variant={
+                                  item.status === 'approved' || item.status === 'active'
+                                    ? 'success'
+                                    : item.status === 'pending'
+                                      ? 'warning'
+                                      : 'danger'
+                                }
+                                size="small"
+                              >
+                                {item.status}
+                              </Badge>
+                            </td>
+                            <td className="py-3 pr-3 text-slate-500">{item.approved_by}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
               )}
           </div>
         </div>

@@ -1,7 +1,8 @@
 import React, { useState, useMemo, useEffect, useCallback, Fragment } from 'react';
 import AppShell from '../components/AppShell';
+import Badge from '../components/Badge';
 import { useLeaveRequests, useMaintenanceRequests, useGuestRequests } from '../hooks';
-import { toLocalDateInputKey } from '../utils/dateUtils';
+import { formatDateRange, formatRelativeTime, toLocalDateInputKey } from '../utils/dateUtils';
 import {
   combinedQueueStatusFilterOptions,
   leaveGuestBackendStatusFilterOptions,
@@ -13,6 +14,10 @@ import RequestHistorySidePanel, {
   type HistoryRow,
 } from '../components/dashboard/RequestHistorySidePanel';
 import QueuePaginationBar from '../components/QueuePaginationBar';
+import {
+  getMaintenanceStatusBadgeVariant,
+  getMaintenanceStatusLabel,
+} from '../utils/maintenanceStatusDisplay';
 import {
   getStudentHistoryColumns,
   type StudentHistoryHeaderProps,
@@ -434,7 +439,61 @@ const StudentRequestHistoryPage: React.FC = () => {
           </div>
 
           <div className="min-h-0 flex-1 overflow-auto bg-white dark:bg-slate-900/30">
-            <table className="w-full min-w-[640px] border-collapse text-left text-sm">
+            <div className="divide-y divide-surface-100 dark:divide-slate-700/60 lg:hidden">
+              {visibleHistoryRows.length > 0 ? (
+                visibleHistoryRows.map(req => {
+                  const statusLabel =
+                    req.kind === 'maintenance'
+                      ? getMaintenanceStatusLabel(req.raw as MaintenanceRequest)
+                      : req.status.charAt(0).toUpperCase() + req.status.slice(1).replace(/_/g, ' ');
+                  const statusVariant =
+                    req.kind === 'maintenance'
+                      ? getMaintenanceStatusBadgeVariant(req.raw as MaintenanceRequest)
+                      : req.status === 'approved' || req.status === 'completed' || req.status === 'active'
+                        ? 'success'
+                        : req.status === 'pending' || req.status === 'assigned' || req.status === 'in_progress'
+                          ? 'warning'
+                          : 'danger';
+
+                  return (
+                    <button
+                      key={`${req.kind}-${req.id}-mobile`}
+                      type="button"
+                      onClick={() => setSelectedHistoryRow(req)}
+                      className="w-full px-4 py-4 text-left transition-colors hover:bg-cyan-50/35 dark:hover:bg-slate-800/55"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                              {req.typeLabel}
+                            </span>
+                            <span className="text-xs text-slate-500 dark:text-slate-400">
+                              {formatRelativeTime(req.date)}
+                            </span>
+                          </div>
+                          <p className="mt-2 text-sm font-semibold text-slate-900 dark:text-slate-100">{req.title}</p>
+                          <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+                            {getHistoryRowSummary(req)}
+                          </p>
+                        </div>
+                        <Badge variant={statusVariant} size="small">
+                          {statusLabel}
+                        </Badge>
+                      </div>
+                    </button>
+                  );
+                })
+              ) : (
+                <div className="px-4 py-10 text-center text-sm text-slate-500 dark:text-slate-400">
+                  {historyRows.length === 0
+                    ? 'No requests yet'
+                    : 'No requests match this filter'}
+                </div>
+              )}
+            </div>
+
+            <table className="hidden w-full min-w-[640px] border-collapse text-left text-sm lg:table">
               <thead className="sticky top-0 z-10 border-b border-surface-200 bg-slate-50/95 text-slate-500 backdrop-blur-sm dark:border-slate-600 dark:bg-slate-900/95 dark:text-slate-400">
                 <tr>
                   {historyColumns.map(col => (
@@ -493,3 +552,17 @@ const StudentRequestHistoryPage: React.FC = () => {
 };
 
 export default StudentRequestHistoryPage;
+
+function getHistoryRowSummary(row: HistoryRow): string {
+  if (row.kind === 'leave') {
+    const leave = row.raw as LeaveRequest;
+    return `${formatDateRange(leave.start_date, leave.end_date)} · ${leave.reason}`;
+  }
+  if (row.kind === 'guest') {
+    const guest = row.raw as GuestRequest;
+    return `${guest.guest_name} · ${guest.visit_type === 'overnight' ? 'Overnight visit' : 'Normal visit'} · ${guest.purpose}`;
+  }
+
+  const maintenance = row.raw as MaintenanceRequest;
+  return `${maintenance.issue_type} · Room ${maintenance.room_number}`;
+}

@@ -103,7 +103,7 @@ const Modal: React.FC<ModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fadeIn"
+      className="fixed inset-0 z-50 flex items-end justify-center p-3 bg-slate-900/40 backdrop-blur-sm animate-fadeIn sm:items-center sm:p-4"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
@@ -111,9 +111,9 @@ const Modal: React.FC<ModalProps> = ({
     >
       <div
         ref={modalRef}
-        className={`bg-white rounded-2xl shadow-glass-lg w-full ${sizeStyles[size]} animate-scaleIn overflow-hidden`}
+        className={`bg-white rounded-2xl shadow-glass-lg w-full ${sizeStyles[size]} animate-scaleIn overflow-hidden max-h-[calc(100vh-1.5rem)]`}
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-surface-200">
+        <div className="flex items-center justify-between px-4 py-3.5 border-b border-surface-200 sm:px-6 sm:py-4">
           <h2 id="modal-title" className="text-lg font-semibold text-slate-800">
             {title}
           </h2>
@@ -126,10 +126,12 @@ const Modal: React.FC<ModalProps> = ({
           </button>
         </div>
 
-        <div className="px-6 py-5 max-h-[65vh] overflow-y-auto">{children}</div>
+        <div className="px-4 py-4 max-h-[calc(100vh-10rem)] overflow-y-auto sm:px-6 sm:py-5 sm:max-h-[65vh]">
+          {children}
+        </div>
 
         {footer && (
-          <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-surface-200 bg-surface-50/50">
+          <div className="flex flex-wrap items-center justify-end gap-3 px-4 py-4 border-t border-surface-200 bg-surface-50/50 sm:px-6">
             {footer}
           </div>
         )}
